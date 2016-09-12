@@ -1,0 +1,13 @@
+[Unit]
+Description=Apache ActiveMQ 
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/apache-activemq-5.14.0/bin/start.sh
+ExecStop=/usr/local/apache-activemq-5.14.0/bin/stop.sh
+User=activemq
+Group=activemq
+
+[Install]
+WantedBy=multi-user.target

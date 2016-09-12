@@ -1,0 +1,16 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "debian/jessie64"
+  config.vm.network "forwarded_port", guest: 8080, host: 8080 
+
+  config.vm.provision "shell", inline: <<-SHELL
+    wget -q -O - http://pkg.jenkins.io/debian/jenkins.io.key | apt-key add -
+    echo deb http://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list
+    echo deb http://ftp.debian.org/debian jessie-backports main > /etc/apt/sources.list.d/jessie-backports.list
+    apt-get update 
+    apt-get install -y openjdk-7-jdk openjdk-8-jdk ant maven gradle git subversion cvs mercurial
+    apt-get install -y jenkins 
+  SHELL
+end

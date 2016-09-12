@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "debian/jessie64"
+  config.vm.network "forwarded_port", guest: 8080, host: 8080 
+
+  config.vm.provision "shell", inline: <<-SHELL
+    echo deb http://ftp.debian.org/debian jessie-backports main > /etc/apt/sources.list.d/jessie-backports.list
+    aptitude update
+    aptitude install -y openjdk-8-jdk zip unzip
+
+    fileName=apache-tomcat-8.5.5.zip  
+
+    if [ ! -f $fileName ] ; then
+      wget -q http://www-eu.apache.org/dist/tomcat/tomcat-8/v8.5.5/bin/$fileName 
+      unzip -q $fileName -d /usr/local
+      chmod 755 /usr/local/apache-tomcat*/bin/*.sh
+
+      grep -q tomcat /etc/passwd
+      if [ $? -ne 0 ] ; then 
+        useradd -r tomcat
+      fi
+      chown -R tomcat:tomcat /usr/local/apache-tomcat*
+
+      install --owner=tomcat --group=tomcat /vagrant/tomcat-users.xml /usr/local/apache-tomcat-8.5.5/conf
+      install --owner=tomcat --group=tomcat /vagrant/manager-context.xml /usr/local/apache-tomcat-8.5.5/webapps/manager/META-INF/context.xml
+
+      install --owner=root  --mode=644 /vagrant/tomcat.service /etc/systemd/system
+      systemctl enable tomcat 
+      systemctl start tomcat
+    fi
+  SHELL
+end

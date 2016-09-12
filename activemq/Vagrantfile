@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "debian/jessie64"
+  config.vm.network "forwarded_port", guest: 8161, host: 8161
+  config.vm.network "forwarded_port", guest: 61616, host: 61616 
+  config.vm.network "forwarded_port", guest: 5672, host: 5672 
+  config.vm.network "forwarded_port", guest: 61613, host: 61613 
+  config.vm.network "forwarded_port", guest: 1883, host: 1883 
+  config.vm.network "forwarded_port", guest: 61614, host: 61614 
+
+  config.vm.provision "shell", inline: <<-SHELL
+    aptitude update
+    aptitude install -y openjdk-7-jdk 
+
+    if [ ! -f  apache-activemq-5.14.0-bin.tar.gz ] ; then
+      wget -q 'http://www.apache.org/dyn/closer.cgi?filename=/activemq/5.14.0/apache-activemq-5.14.0-bin.tar.gz&action=download' -O apache-activemq-5.14.0-bin.tar.gz
+      tar -xzf apache-activemq-5.14.0-bin.tar.gz -C /usr/local
+
+      grep -q activemq /etc/passwd
+      if [ $? -ne 0 ] ; then
+        useradd -r activemq 
+      fi
+      chown -R activemq:activemq /usr/local/apache-activemq*
+
+      install --owner=activemq --group=activemq --mode=755 /vagrant/start.sh /usr/local/apache-activemq-5.14.0/bin
+      install --owner=activemq --group=activemq --mode=755 /vagrant/stop.sh /usr/local/apache-activemq-5.14.0/bin
+
+      install --owner=root  --mode=644 /vagrant/activemq.service /etc/systemd/system
+      systemctl enable  activemq
+      systemctl start activemq 
+    fi
+  SHELL
+end

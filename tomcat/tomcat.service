@@ -1,0 +1,13 @@
+[Unit]
+Description=Apache Tomcat
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/apache-tomcat-8.5.5/bin/startup.sh
+ExecStop=/usr/local/apache-tomcat-8.5.5/bin/shutdown.sh
+User=tomcat
+Group=tomcat
+
+[Install]
+WantedBy=multi-user.target

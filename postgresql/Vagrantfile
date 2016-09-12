@@ -1,0 +1,16 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "debian/jessie64"
+  config.vm.network "forwarded_port", guest: 5432, host: 5432 
+
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y postgresql
+    install --owner=postgres  --mode=640 /vagrant/pg_hba.conf /etc/postgresql/9.4/main
+    sed -i "s/^.*listen_addresses.*$/listen_addresses = '\*'/" /etc/postgresql/9.4/main/postgresql.conf
+    systemctl restart postgresql
+    sudo -u postgres psql -c "alter user postgres with password 'secret';"
+  SHELL
+end

@@ -1,0 +1,17 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "debian/jessie64"
+  config.vm.network "forwarded_port", guest: 3306, host: 3306 
+
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    debconf-set-selections <<< "mysql-server mysql-server/root_password password secret"
+    debconf-set-selections <<< "mysql-server mysql-server/root_password_again password secret"
+    apt-get install -y mysql-server
+    sed -i "s/^.*bind-address.*$/bind-address = \*/" /etc/mysql/my.cnf
+    echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'secret';" | mysql -u root --password=secret 
+    systemctl restart mysql
+  SHELL
+end
