@@ -27,8 +27,8 @@ The admin account is 'admin' and the password is 'admin'.
 
 ### Jenkins
 
-Jenkins is available at port 8080 after doing `vagrant up`.  You need to log in with `vagrant ssh` to get the initial admin 
-password as described on the opening page then follow the instructions on the next page to get Jenkins fully set up.
+This environment gives the latest version of Jekins from pkg.jenkins.io.  Jenkins is available at port 8080 after doing `vagrant up`.  You need to log in with `vagrant ssh` to get the initial admin password as described on the opening page then follow the instructions 
+on the next page to get Jenkins fully set up.
 
 This environment comes with all the major open source version control systems installed (git, subversion, cvs, etc) as well as 
 maven, gradle, ant, and OpenJDKs 7 and 8.
