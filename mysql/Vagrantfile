@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password secret"
     apt-get install -y mysql-server
     sed -i "s/^.*bind-address.*$/bind-address = \*/" /etc/mysql/my.cnf
-    echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'secret';" | mysql -u root --password=secret 
+    echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'secret' with GRANT OPTION;" | mysql -u root --password=secret 
     systemctl restart mysql
   SHELL
 end
