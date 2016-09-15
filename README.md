@@ -37,6 +37,10 @@ maven, gradle, ant, and OpenJDKs 7 and 8.
 
 ### MySQL
 
+MySQL is available on port 3306.  You can log with the _root_ account using password _secret_.
+
 ### PostgreSQL
+
+PostgreSQL is available on port 5432.  You can log with the _postgres_ account using password _secret_.
 
 ### Tomcat
